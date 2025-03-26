@@ -256,7 +256,7 @@ export function CampaignForm({ onSubmit }: CampaignFormProps) {
                                                     value={group.id}
                                                     className="text-black hover:bg-[#41b658]/10 focus:bg-[#41b658]/10"
                                                 >
-                                                    {group.groupName}
+                                                    {group.name}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
