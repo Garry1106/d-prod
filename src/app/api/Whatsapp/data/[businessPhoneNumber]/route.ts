@@ -35,7 +35,7 @@ const activeChangeStreams = new Map();
 // Correct the type signature for Next.js App Router
 export async function GET(
   request: NextRequest,
-  {params}: { params: { businessPhoneNumber: string } }
+  { params }: { params: { businessPhoneNumber: string } }
 ) {
   const { businessPhoneNumber } = await params;
 
