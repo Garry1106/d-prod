@@ -1,7 +1,7 @@
-import connectToDatabase, { ensureCollections, getTenantDatabase } from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import Redis, { RedisOptions } from "ioredis";
 import util from 'util';
+import connectToDatabase, { ensureCollections, getTenantDatabase } from "@/lib/mongodb";
 
 const REDIS_CONFIG: RedisOptions = {
   host: 'localhost',
@@ -32,13 +32,17 @@ const getRedisKey = (businessPhoneNumber: string) => `chats:${businessPhoneNumbe
 
 const activeChangeStreams = new Map();
 
-// Use the correct type signature for Next.js App Router
+// Define specific type parameters for the route handler
+type RouteParams = {
+  businessPhoneNumber: string;
+};
+
 export async function GET(
-  request: Request | NextRequest,
-  context: { params: { businessPhoneNumber: string } }
+  request: NextRequest,
+  { params }: { params: RouteParams }
 ) {
-  // Access the parameter from context
-  const businessPhoneNumber = await context.params.businessPhoneNumber;
+  // Use the parameters
+  const businessPhoneNumber = params.businessPhoneNumber;
 
   console.log("Business Phone number in data", businessPhoneNumber);
 
