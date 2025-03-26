@@ -32,17 +32,10 @@ const getRedisKey = (businessPhoneNumber: string) => `chats:${businessPhoneNumbe
 
 const activeChangeStreams = new Map();
 
-// Define specific type parameters for the route handler
-type RouteParams = {
-  businessPhoneNumber: string;
-};
-
-export async function GET(
-  request: NextRequest,
-  { params }: { params: RouteParams }
-) {
-  // Use the parameters
-  const businessPhoneNumber = params.businessPhoneNumber;
+// Use the simpler nextjs route handler pattern
+export async function GET(req: NextRequest) {
+  // Get the business phone number from the URL path
+  const businessPhoneNumber = req.nextUrl.pathname.split('/').pop();
 
   console.log("Business Phone number in data", businessPhoneNumber);
 
@@ -63,6 +56,7 @@ export async function GET(
     const db = await getTenantDatabase(businessPhoneNumber);
     const chatsCollection = db.collection("chats");
     
+    // Rest of your code remains the same...
     // Initialize change stream if not already active
     if (!activeChangeStreams.has(businessPhoneNumber)) {
       console.log(`Initializing change stream for ${businessPhoneNumber}...`);
