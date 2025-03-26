@@ -1,8 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
+
+interface RouteContext {
+  params: {
+    name: string;
+  };
+}
 export async function GET(
-  request: Request,
-  { params }: { params: { name: string } }
+  request: NextRequest, context: RouteContext
 ) {
   try {
     // Get API credentials from request headers instead of context
@@ -19,7 +24,7 @@ export async function GET(
       );
     }
 
-    const exactName = await decodeURIComponent(params.name);
+    const exactName = await decodeURIComponent(context.params.name);
     const apiUrl = new URL(
       `https://graph.facebook.com/${API_VERSION}/${WABA_ID}/message_templates`
     );
