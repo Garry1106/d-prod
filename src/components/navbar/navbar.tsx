@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils/utils";
+import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Products", href: "/products" },
