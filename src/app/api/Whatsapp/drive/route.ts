@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const filePath = path.join(tmpDir, sanitizedFileName);
 
     // Write the file to the temporary directory
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const buffer:any = Buffer.from(await file.arrayBuffer());
     fs.writeFileSync(filePath, buffer);
 
     // Google Drive authentication
