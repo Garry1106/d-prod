@@ -10,7 +10,8 @@ const REDIS_CONFIG: RedisOptions = {
   maxRetriesPerRequest: 3,
 };
 
-// Make this a non-exported function
+let redisClient: Redis | null = null;
+
 function getRedisClient(): Redis {
   if (!redisClient) {
     redisClient = new Redis(REDIS_CONFIG);
@@ -27,22 +28,20 @@ function getRedisClient(): Redis {
   return redisClient;
 }
 
-let redisClient: Redis | null = null;
-
-// Helper function to generate Redis key (also non-exported)
 const getRedisKey = (businessPhoneNumber: string) => `chats:${businessPhoneNumber}`;
 
-// Keep track of initialized change streams
 const activeChangeStreams = new Map();
 
+// Correct the type signature for Next.js App Router
 export async function GET(
   request: NextRequest,
-  { params }: { params: { businessPhoneNumber: string } }
+  context: { params: { businessPhoneNumber: string } }
 ) {
-  const { businessPhoneNumber } = await params;
+  const { businessPhoneNumber } = await context.params;
 
   console.log("Business Phone number in data", businessPhoneNumber);
 
+  // Rest of your code stays the same...
   if (!businessPhoneNumber) {
     return NextResponse.json(
       { success: false, error: "Business phone number is required." },
@@ -51,6 +50,7 @@ export async function GET(
   }
 
   try {
+    // Rest of implementation...
     // Initialize Redis client
     const redis = getRedisClient();
     
