@@ -1,5 +1,5 @@
 import connectToDatabase, { ensureCollections, getTenantDatabase } from "@/lib/mongodb";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Redis, { RedisOptions } from "ioredis";
 import util from 'util';
 
@@ -35,10 +35,10 @@ const getRedisKey = (businessPhoneNumber: string) => `chats:${businessPhoneNumbe
 const activeChangeStreams = new Map();
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { businessPhoneNumber: string } }
 ) {
-  var { businessPhoneNumber } = await params;
+  const { businessPhoneNumber } = await params;
 
   console.log("Business Phone number in data",businessPhoneNumber)
 
