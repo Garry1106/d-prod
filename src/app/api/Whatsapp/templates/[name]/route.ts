@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 
-
-type RouteParams = {
-  name: string;
-};
-export async function GET(
-  request: NextRequest, { params }: { params: RouteParams }
-) {
+export async function GET(req: NextRequest) {
   try {
-    // Get API credentials from request headers instead of context
-    const headers = request.headers;
+    // Get the template name from the URL path
+    const name = req.nextUrl.pathname.split('/').pop();
+    if (!name) {
+      return NextResponse.json(
+        { error: "Template name is required" },
+        { status: 400 }
+      );
+    }
+    
+    // Decode the name
+    const exactName = decodeURIComponent(name);
+    
+    // Get API credentials from request headers
+    const headers = req.headers;
     const API_VERSION = process.env.WHATSAPP_API_VERSION;
     const WABA_ID = headers.get("x-waba-id");
     const ACCESS_TOKEN = headers.get("x-access-token");
@@ -22,7 +28,6 @@ export async function GET(
       );
     }
 
-    const exactName = await decodeURIComponent(params.name);
     const apiUrl = new URL(
       `https://graph.facebook.com/${API_VERSION}/${WABA_ID}/message_templates`
     );
