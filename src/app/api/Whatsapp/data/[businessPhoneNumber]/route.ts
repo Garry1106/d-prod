@@ -4,15 +4,14 @@ import Redis, { RedisOptions } from "ioredis";
 import util from 'util';
 
 const REDIS_CONFIG: RedisOptions = {
-  host:'localhost',
+  host: 'localhost',
   port: 6379,
   retryStrategy: (times: number) => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 };
 
-let redisClient: Redis | null = null;
-
-export function getRedisClient(): Redis {
+// Make this a non-exported function
+function getRedisClient(): Redis {
   if (!redisClient) {
     redisClient = new Redis(REDIS_CONFIG);
 
@@ -28,7 +27,9 @@ export function getRedisClient(): Redis {
   return redisClient;
 }
 
-// Helper function to generate Redis key
+let redisClient: Redis | null = null;
+
+// Helper function to generate Redis key (also non-exported)
 const getRedisKey = (businessPhoneNumber: string) => `chats:${businessPhoneNumber}`;
 
 // Keep track of initialized change streams
@@ -40,7 +41,7 @@ export async function GET(
 ) {
   const { businessPhoneNumber } = await params;
 
-  console.log("Business Phone number in data",businessPhoneNumber)
+  console.log("Business Phone number in data", businessPhoneNumber);
 
   if (!businessPhoneNumber) {
     return NextResponse.json(
@@ -58,10 +59,9 @@ export async function GET(
     await ensureCollections(businessPhoneNumber);
     const db = await getTenantDatabase(businessPhoneNumber);
     const chatsCollection = db.collection("chats");
-
-    // console.log(chatsCollection)
     
-
+    // The rest of your code stays the same...
+    
     // Initialize change stream if not already active
     if (!activeChangeStreams.has(businessPhoneNumber)) {
       console.log(`Initializing change stream for ${businessPhoneNumber}...`);
@@ -88,8 +88,6 @@ export async function GET(
     // Try to get data from Redis
     const redisKey = getRedisKey(businessPhoneNumber);
     const cachedData = await redis.get(redisKey);
-
-    
 
     if (cachedData) {
       console.log("Data retrieved from Redis cache");
@@ -122,4 +120,3 @@ export async function GET(
     );
   }
 }
-
