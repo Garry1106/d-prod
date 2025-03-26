@@ -32,16 +32,16 @@ const getRedisKey = (businessPhoneNumber: string) => `chats:${businessPhoneNumbe
 
 const activeChangeStreams = new Map();
 
-// Correct the type signature for Next.js App Router
+// Use the correct type signature for Next.js App Router
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { businessPhoneNumber: string } }
+  request: Request | NextRequest,
+  context: { params: { businessPhoneNumber: string } }
 ) {
-  const { businessPhoneNumber } = await params;
+  // Access the parameter from context
+  const businessPhoneNumber = await context.params.businessPhoneNumber;
 
   console.log("Business Phone number in data", businessPhoneNumber);
 
-  // Rest of your code stays the same...
   if (!businessPhoneNumber) {
     return NextResponse.json(
       { success: false, error: "Business phone number is required." },
@@ -50,7 +50,6 @@ export async function GET(
   }
 
   try {
-    // Rest of implementation...
     // Initialize Redis client
     const redis = getRedisClient();
     
@@ -59,8 +58,6 @@ export async function GET(
     await ensureCollections(businessPhoneNumber);
     const db = await getTenantDatabase(businessPhoneNumber);
     const chatsCollection = db.collection("chats");
-    
-    // The rest of your code stays the same...
     
     // Initialize change stream if not already active
     if (!activeChangeStreams.has(businessPhoneNumber)) {
