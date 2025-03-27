@@ -20,6 +20,9 @@ const DashboardPage = () => {
   const [isOnboarded, setIsOnboarded] = useState(true); // Onboarding state
   const itemsPerPage = 5; // Items per page for pagination
   const router = useRouter(); // Initialize useRouter
+
+
+  console.log("UserDetails in Console page",userDetails)
   
   // Use the UserContext for dark mode
   const { isDarkMode, toggleDarkMode } = useUserContext();
