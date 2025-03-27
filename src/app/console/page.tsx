@@ -15,14 +15,13 @@ import { useRouter } from 'next/navigation'; // Import useRouter for navigation
 
 const DashboardPage = () => {
   const { userDetails, loading } = useUserDetails(); // Fetch user details
-  const [selectedCategory, setSelectedCategory] = useState<'Whatsapp' | 'WebChatbot'>('Whatsapp');
   const [currentPage, setCurrentPage] = useState(1); // Pagination state
   const [isOnboarded, setIsOnboarded] = useState(true); // Onboarding state
   const itemsPerPage = 5; // Items per page for pagination
   const router = useRouter(); // Initialize useRouter
 
-
   console.log("UserDetails in Console page",userDetails)
+  
   
   // Use the UserContext for dark mode
   const { isDarkMode, toggleDarkMode } = useUserContext();
@@ -160,15 +159,6 @@ const DashboardPage = () => {
       <nav className="border-b-2 py-4 px-6 flex justify-between items-center">
         <h1 className="text-xl font-bold text-[#EB6C33]">DuneFox <span className='text-black dark:text-white text-xl'>Console</span></h1>
         <div className="flex items-center space-x-4">
-          {/* Search Bar */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="pl-1 pr-4 py-1 border rounded-lg focus:outline-none dark:bg-[#403D39] dark:border-gray-700 dark:text-white"
-            />
-          </div>
-
           {/* Notifications Bell */}
           <TooltipProvider>
             <Tooltip>
