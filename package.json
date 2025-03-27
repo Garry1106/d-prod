@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall":"prisma generate --schema=./prisma/schema1.prisma && prisma generate --schema=./prisma/schema2.prisma",
+    "postinstall": "prisma generate --schema=./prisma/schema1.prisma && prisma generate --schema=./prisma/schema2.prisma",
     "vercel-build": "prisma generate --schema=./prisma/schema1.prisma && prisma generate --schema=./prisma/schema2.prisma && next build"
   },
   "dependencies": {
@@ -117,9 +117,6 @@
     "typescript": "^5"
   },
   "prisma": {
-    "schema": [
-      "./prisma/schema1.prisma",
-      "./prisma/schema2.prisma"
-    ]
+    "schema": "./prisma/schema1.prisma"
   }
 }
