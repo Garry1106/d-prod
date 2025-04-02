@@ -139,7 +139,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Legion\\Desktop\\DuneFox-main\\prisma\\generated\\client1",
+      "value": "C:\\Users\\Mukul\\Downloads\\d-prod\\prisma\\generated\\client1",
       "fromEnvVar": null
     },
     "config": {
@@ -153,12 +153,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Legion\\Desktop\\DuneFox-main\\prisma\\schema1.prisma",
+    "sourceFilePath": "C:\\Users\\Mukul\\Downloads\\d-prod\\prisma\\schema1.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../..",
   "clientVersion": "5.22.0",
@@ -167,6 +166,7 @@ const config = {
     "db"
   ],
   "activeProvider": "mongodb",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {

@@ -133,7 +133,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Legion\\Desktop\\DuneFox-main\\prisma\\generated\\client2",
+      "value": "C:\\Users\\Mukul\\Downloads\\d-prod\\prisma\\generated\\client2",
       "fromEnvVar": null
     },
     "config": {
@@ -147,12 +147,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Legion\\Desktop\\DuneFox-main\\prisma\\schema2.prisma",
+    "sourceFilePath": "C:\\Users\\Mukul\\Downloads\\d-prod\\prisma\\schema2.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../..",
   "clientVersion": "5.22.0",
