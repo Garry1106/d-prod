@@ -1,12 +1,12 @@
-import { NextResponse, NextRequest } from "next/server";
+import { parsePdfFile } from "@/actions/utils/test";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { pipeline } from "@xenova/transformers";
 import dotenv from "dotenv";
 import fs from "fs";
 import { MongoClient } from "mongodb";
+import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import puppeteer from 'puppeteer';
-import { parsePdfFile } from "@/actions/utils/test";
 
 
 // Specify Node.js runtime
@@ -28,7 +28,7 @@ const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
 // Interface for Clerk Document
 interface ClerkDocument {
-    clerkId: string;
+    tenantId: string;  // Changed from clerkId to tenantId
     documentUrl?: string;  // S3 URL
     websiteUrl?: string;   // Scraped website URL
     embedUrl: string;      // Generated embed URL
@@ -79,7 +79,7 @@ const setupMongoDB = async () => {
         await metadataCollection.insertOne({
             currentCollection: "vector_1",
             totalClerks: 0,
-            clerkMappings: {}, // Stores clerkId -> vector_X mapping
+            clerkMappings: {}, // Stores tenantId -> vector_X mapping (keeping name for backward compatibility)
         });
         console.log("Metadata collection initialized.");
     }
@@ -110,7 +110,7 @@ const ensureVectorIndex = async (database: any, collectionName: string) => {
                     },
                     {
                         type: "filter",
-                        path: "clerkId",
+                        path: "tenantId",  // Changed from clerkId to tenantId
                     },
                 ],
             },
@@ -146,21 +146,21 @@ const getActiveCollection = async (metadataCollection: any, database: any) => {
 
 // Store clerk information
 async function storeClerkInfo(
-    clerkId: string,
+    tenantId: string,  // Changed from clerkId to tenantId
     documentInfo: {
         s3Url?: string;
         websiteUrl?: string;
         embedUrl: string;
     }
 ) {
-    console.log(`Storing clerk info for clerkId: ${clerkId}`);
+    console.log(`Storing clerk info for tenantId: ${tenantId}`);
     const client = await MongoClient.connect(process.env.MONGODB_URL_2!);
     try {
-        const db = client.db(clerkId);
+        const db = client.db(tenantId);  // Changed from clerkId to tenantId
         const collection = db.collection('userinfo');
 
         const document: ClerkDocument = {
-            clerkId,
+            tenantId,  // Changed from clerkId to tenantId
             uploadedAt: new Date(),
             embedUrl: documentInfo.embedUrl,
             documentType: documentInfo.s3Url ? 'pdf' : 'website'
@@ -215,7 +215,7 @@ export async function POST(req: NextRequest) {
         const formData = await req.formData();
 
         // Initialize variables to store the extracted values
-        let clerkId: string | null = "";
+        let clerkId: string | null = "";  // Keep variable name as clerkId for form data extraction
         let websiteUrl: string | null = null;
         let file: File | null = null;
 
@@ -253,9 +253,12 @@ export async function POST(req: NextRequest) {
             }
         }
 
+        // Rename clerkId to tenantId for rest of the processing
+        const tenantId = clerkId;
+
         // Log the extracted fields separately
         console.log("Following are the values ")
-        console.log('Clerk ID:', clerkId);
+        console.log('Tenant ID (from clerkId):', tenantId);
         console.log('Website URL:', websiteUrl);
         console.log('File:', file);
 
@@ -268,7 +271,7 @@ export async function POST(req: NextRequest) {
             const buffer: any = Buffer.from(await file.arrayBuffer());
             await fs.promises.writeFile(documentPath, buffer);
 
-            const fileName = `${clerkId}/${path.basename(documentPath)}`;
+            const fileName = `${tenantId}/${path.basename(documentPath)}`;  // Changed from clerkId to tenantId
             const contentType = file.type;
 
             console.log("hello world in file", documentPath)
@@ -319,11 +322,11 @@ export async function POST(req: NextRequest) {
 
             // Generate embed URL
             const baseUrl = process.env.NEXT_PUBLIC_HOST_URL || 'http://localhost:3000';
-            const embedUrl = `${baseUrl}/${clerkId}`;
+            const embedUrl = `${baseUrl}/${tenantId}`;  // Changed from clerkId to tenantId
             console.log(`Generated embed URL: ${embedUrl}`);
 
             // Store clerk information
-            await storeClerkInfo(clerkId, {
+            await storeClerkInfo(tenantId, {  // Changed from clerkId to tenantId
                 s3Url: s3Url || undefined,
                 websiteUrl: websiteUrl || undefined,
                 embedUrl,
@@ -337,7 +340,7 @@ export async function POST(req: NextRequest) {
                     normalize: true,
                 });
                 await activeCollection.insertOne({
-                    clerkId,
+                    tenantId,  // Changed from clerkId to tenantId
                     text: chunk,
                     embedding: Array.from(embedding.data),
                     createdAt: new Date(),

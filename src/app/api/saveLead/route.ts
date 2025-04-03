@@ -1,18 +1,18 @@
 import { MongoClient } from 'mongodb';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
 const client = new MongoClient(process.env.MONGODB_URL_2!);
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method Not Allowed' });
-    }
-
+export async function POST(request: NextRequest) {
     try {
-        const { tenantId, uuid, name, email } = req.body;
+        const body = await request.json();
+        const { tenantId, uuid, name, email } = body;
 
         if (!tenantId || !uuid || !name || !email) {
-            return res.status(400).json({ message: 'Missing required fields' });
+            return NextResponse.json(
+                { message: 'Missing required fields' },
+                { status: 400 }
+            );
         }
 
         await client.connect();
@@ -24,16 +24,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (existingTenant) {
             // Check if the name, email, and uuid already exist
             const existingLead = existingTenant.leads?.find(
-                (lead: { name: string; email: string; uuid: string }) => lead.name === name && lead.email === email && lead.uuid === uuid
+                (lead: { name: string; email: string; uuid: string }) => 
+                    lead.name === name && lead.email === email && lead.uuid === uuid
             );
-            if (existingLead) {
-                return res.status(409).json({ message: 'Lead already exists' });
-            }
             
+            if (existingLead) {
+                return NextResponse.json(
+                    { message: 'Lead already exists' },
+                    { status: 409 }
+                );
+            }
+
             // Append new lead to the existing tenant's leads array
             await leadsCollection.updateOne(
                 { tenantId },
-                { $push: { leads: { name, email, uuid, createdAt: new Date() } } as any}
+                { $push: { leads: { name, email, uuid, createdAt: new Date() } } as any }
             );
         } else {
             // Create a new tenant entry with the lead
@@ -56,10 +61,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await leadsCollection.insertOne(leadData);
         }
 
-        res.status(201).json({ message: 'Lead saved successfully' });
+        return NextResponse.json(
+            { message: 'Lead saved successfully' },
+            { status: 201 }
+        );
     } catch (error) {
         console.error('Error saving lead:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        return NextResponse.json(
+            { message: 'Internal Server Error' },
+            { status: 500 }
+        );
     } finally {
         await client.close();
     }
