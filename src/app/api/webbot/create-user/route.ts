@@ -2,7 +2,7 @@ import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-  const uri = 'mongodb+srv://shitolemukul47:dxatGqHzPfmu8jUv@clusternew.gfeis.mongodb.net/?retryWrites=true&w=majority&appName=Clusternew'; // Replace with your MongoDB connection string
+  const uri = 'mongodb+srv://shitolemukul47:ozT5QTChtW2EhEhK@clusterdunefox.myjice7.mongodb.net/?retryWrites=true&w=majority&appName=ClusterDuneFox'; // Replace with your MongoDB connection string
   const client = new MongoClient(uri);
 
   try {
