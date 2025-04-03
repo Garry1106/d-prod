@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from 'next/server';
 
 dotenv.config();
 
@@ -10,20 +10,19 @@ interface TenantDocument {
   [key: string]: any; // Allow for other fields if the structure isn't fixed
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== "GET") {
-    res.status(405).json({ message: "Method Not Allowed" });
-    return;
-  }
-
-  const { tenantId } = req.query;
+export async function GET(request: Request) {
+  // Parse the URL to get query parameters
+  const { searchParams } = new URL(request.url);
+  const tenantId = searchParams.get('tenantId');
 
   console.log("Received request for tenant ID:", tenantId);
 
-  if (!tenantId || typeof tenantId !== "string") {
+  if (!tenantId) {
     console.error("Invalid Tenant ID:", tenantId);
-    res.status(400).json({ message: "Tenant ID is required and must be a string." });
-    return;
+    return NextResponse.json(
+      { message: "Tenant ID is required and must be a string." },
+      { status: 400 }
+    );
   }
 
   let connection: MongoClient | undefined;
@@ -46,17 +45,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (documents.length === 0) {
       console.warn("No documents found for the given Tenant ID:", tenantId);
-      res.status(404).json({ message: "No documents found for the given Tenant ID." });
-      return;
+      return NextResponse.json(
+        { message: "No documents found for the given Tenant ID." },
+        { status: 404 }
+      );
     }
 
-    res.status(200).json({
+    return NextResponse.json({
       message: "Documents fetched successfully.",
       data: documents,
     });
   } catch (error) {
     console.error("Error fetching documents:", error);
-    res.status(500).json({ message: "Internal Server Error." });
+    return NextResponse.json(
+      { message: "Internal Server Error." },
+      { status: 500 }
+    );
   } finally {
     if (connection) {
       try {
@@ -67,6 +71,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
   }
-};
-
-export default handler;
+}
